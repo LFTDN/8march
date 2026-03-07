@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>c 8 Марта, любимка</title>
 
 <style>
@@ -101,7 +102,29 @@ heart.innerHTML="❤️";
 
 heart.style.left=Math.random()*100+"vw";
 
-heart.onclick=function(){
+heart.addEventListener("click", clickHeart);
+heart.addEventListener("touchstart", clickHeart);
+
+function clickHeart(){
+
+heart.remove();
+heartsClicked++;
+
+let remaining = totalHearts - heartsClicked;
+
+if(remaining > 0){
+document.getElementById("game").innerHTML =
+"Осталось " + remaining + " ❤️";
+}
+
+if(heartsClicked >= totalHearts){
+
+document.getElementById("game").style.display="none";
+document.getElementById("surprise").style.display="block";
+
+}
+
+}
 
 heart.remove();
 heartsClicked++;
