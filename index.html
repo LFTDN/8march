@@ -26,7 +26,8 @@ font-size:22px;
 
 #game{
 margin-top:40px;
-font-size:22px;
+font-size:24px;
+font-weight:bold;
 }
 
 .heart{
@@ -69,7 +70,7 @@ box-shadow:0 10px 20px rgba(0,0,0,0.3);
 
 <body>
 
-<h1>С 8 Марта 💐</h1>
+<h1>С 8 марта, любимка 💐</h1>
 
 <div id="game">
 Найди и нажми <b>3 сердечка ❤️</b>
@@ -80,9 +81,7 @@ box-shadow:0 10px 20px rgba(0,0,0,0.3);
 <h2>Поздравляю тебя!</h2>
 
 <p>
-Пусть каждый день будет наполнен радостью,  
-улыбками и счастьем.  
-Ты делаешь этот мир красивее ❤️
+Ты самая красивая девочка на свете, люблю тебя! ❤️
 </p>
 
 <img src="photo.jpg" alt="photo">
@@ -92,6 +91,7 @@ box-shadow:0 10px 20px rgba(0,0,0,0.3);
 <script>
 
 let heartsClicked = 0;
+let totalHearts = 3;
 
 function createHeart(){
 
@@ -106,8 +106,18 @@ heart.onclick=function(){
 heart.remove();
 heartsClicked++;
 
-if(heartsClicked>=3){
+let remaining = totalHearts - heartsClicked;
+
+if(remaining > 0){
+document.getElementById("game").innerHTML =
+"Осталось " + remaining + " ❤️";
+}
+
+if(heartsClicked >= totalHearts){
+
+document.getElementById("game").style.display="none";
 document.getElementById("surprise").style.display="block";
+
 }
 
 }
