@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>С 8 марта, Никуся 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --r: #e8758a;
+  --rp: #f2a0b0;
+  --light: #fdf0f3;
+  --cream: #fff8f9;
+  --deep: #7a2035;
+  --text: #3a1520;
+}
+
+html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+body {
+  background: var(--cream);
+  font-family: 'Jost', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* Hide custom cursor on touch */
+@media (hover: hover) {
+  body { cursor: none; }
+  .cursor, .cursor-trail { display: block; }
+}
+@media (hover: none) {
+  .cursor, .cursor-trail { display: none; }
+}
+
+.cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--r);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+  mix-blend-mode: multiply;
+}
+.cursor-trail {
+  position: fixed;
+  width: 28px; height: 28px;
+  border: 1.5px solid var(--rp);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease;
+  opacity: 0.6;
+}
+
+#flowerCanvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+}
+
+section {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex; align-items: center; justify-content: center;
+  padding: 3rem 1.5rem;
+}
+
+/* ━━━━━━━━ HERO ━━━━━━━━ */
+.hero {
+  flex-direction: column;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% -5%, #fce4ec99, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 90% 110%, #f8bbd044, transparent 60%),
+    var(--cream);
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3rem, 12vw, 7.5rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--deep);
+  opacity: 0;
+  animation: riseIn 1.1s cubic-bezier(.22,1,.36,1) 0.4s forwards;
+  margin-bottom: 0.8rem;
+}
+.hero-title .italic { font-style: italic; color: var(--r); }
+
+.hero-sub {
+  font-size: clamp(0.85rem, 3vw, 1.2rem);
+  font-weight: 300;
+  color: #a06070;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  animation: riseIn 1s ease 0.9s forwards;
+  margin-bottom: 3.5rem;
+}
+
+.hero-scroll {
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  opacity: 0;
+  animation: riseIn 1s ease 1.4s forwards;
+  color: var(--rp);
+  font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+}
+.scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--r), transparent);
+  animation: linePulse 2s ease infinite;
+}
+@keyframes linePulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ━━━━━━━━ ENVELOPE ━━━━━━━━ */
+.envelope-section {
+  background: linear-gradient(160deg, #fff0f4, var(--cream));
+  flex-direction: column; gap: 2rem;
+}
+
+.section-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: var(--r);
+  text-align: center;
+}
+
+.envelope {
+  width: min(380px, 92vw);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.envelope:active { transform: scale(0.98); }
+
+.env-body {
+  background: white;
+  border: 1.5px solid #f5c0cc;
+  overflow: hidden;
+  box-shadow: 0 20px 60px -15px #e8a0b040, 0 4px 20px -5px #f5c0cc60;
+}
+.env-flap {
+  width: 100%;
+  padding-top: 50%;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+  background: linear-gradient(160deg, #ffd6df, #f5a0b5);
+  transform-origin: top center;
+  transition: transform 0.7s cubic-bezier(.34,1.56,.64,1);
+}
+.envelope.open .env-flap { transform: rotateX(-180deg); }
+
+.env-content {
+  padding: 0 2.5rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.2s cubic-bezier(.22,1,.36,1), padding 0.6s;
+}
+.envelope.open .env-content {
+  max-height: 400px;
+  padding: 2.5rem 2.5rem 2.8rem;
+}
+
+.env-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  line-height: 1.9;
+  font-style: italic;
+  color: var(--text);
+}
+.env-letter .big { font-size: 1.35rem; color: var(--deep); }
+
+.env-hint {
+  text-align: center;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--rp);
+  margin-top: 0.8rem;
+  transition: opacity 0.4s;
+}
+
+/* ━━━━━━━━ PHOTOS ━━━━━━━━ */
+.photos-section {
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 4rem 1.5rem;
+  min-height: auto;
+  scroll-snap-align: start;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, #fce4ec33, transparent),
+    var(--cream);
+}
+
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  width: min(600px, 96vw);
+}
+@media (min-width: 540px) {
+  .photos-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+}
+@media (min-width: 768px) {
+  .photos-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+}
+
+.photo-item {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 2px solid #f5c0cc;
+  position: relative;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  background: #fce8ee;
+}
+.photo-item.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.photo-item:hover, .photo-item:active {
+  box-shadow: 0 10px 35px -8px #e8a0b066;
+  transform: scale(1.03);
+  z-index: 2;
+}
+.photo-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.photo-item:hover img { transform: scale(1.07); }
+
+/* placeholder when image not loaded */
+.photo-item .photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #fce8ee, #fff0f4);
+}
+.photo-item .photo-placeholder span:first-child { font-size: 1.8rem; }
+.photo-item .photo-placeholder span:last-child {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--rp);
+}
+
+/* ━━━━━━━━ LIGHTBOX ━━━━━━━━ */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(58, 21, 32, 0.92);
+  z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  padding: 1.5rem;
+}
+.lightbox.active { opacity: 1; pointer-events: all; }
+.lightbox img {
+  max-width: 100%; max-height: 90vh;
+  object-fit: contain;
+  border: 2px solid #f5c0cc44;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  transition: transform 0.3s;
+}
+.lightbox-close {
+  position: absolute;
+  top: 1.2rem; right: 1.5rem;
+  color: var(--rp);
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+.lightbox-nav {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  color: var(--rp);
+  font-size: 2.2rem;
+  cursor: pointer;
+  padding: 1rem;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.lightbox-prev { left: 0.5rem; }
+.lightbox-next { right: 0.5rem; }
+
+/* ━━━━━━━━ FINALE ━━━━━━━━ */
+.finale-section {
+  flex-direction: column;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 100%, #fce4ec88, transparent),
+    var(--cream);
+  gap: 2rem;
+}
+.finale-flowers {
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
+  letter-spacing: 0.5rem;
+  animation: flowerBounce 3s ease-in-out infinite;
+}
+@keyframes flowerBounce {
+  0%,100% { transform: translateY(0); }
+  25% { transform: translateY(-8px) rotate(-5deg); }
+  75% { transform: translateY(-5px) rotate(5deg); }
+}
+.finale-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 9vw, 4.5rem);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--deep);
+  line-height: 1.1;
+}
+.finale-sign {
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  font-weight: 300;
+  color: var(--r);
+  letter-spacing: 0.08em;
+}
+
+/* ━━━━━━━━ HEARTS BURST ━━━━━━━━ */
+.heart-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 1.2rem;
+  animation: heartUp 1.6s ease forwards;
+}
+@keyframes heartUp {
+  0% { opacity: 1; transform: translateY(0) scale(0.5) rotate(0deg); }
+  40% { opacity: 1; transform: translateY(-60px) scale(1.2) rotate(15deg); }
+  100% { opacity: 0; transform: translateY(-130px) scale(0.8) rotate(-10deg); }
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal-up.visible { opacity: 1; transform: translateY(0); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--rp); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<canvas id="flowerCanvas"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- ━━━ HERO ━━━ -->
+<section class="hero">
+  <h1 class="hero-title">
+    С праздником,<br>
+    <span class="italic">Никуся</span>
+  </h1>
+  <p class="hero-sub">Этот день — целиком твой 🌸</p>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>открыть</span>
+  </div>
+</section>
+
+<!-- ━━━ ENVELOPE ━━━ -->
+<section class="envelope-section">
+  <div class="section-label reveal-up">Письмо для тебя</div>
+  <div class="reveal-up">
+    <div class="envelope" id="envelope" onclick="openEnvelope()" ontouchend="openEnvelope()">
+      <div class="env-body">
+        <div class="env-flap"></div>
+        <div class="env-content">
+          <div class="env-letter">
+            <span class="big">Никуся,</span><br><br>
+            Ты моё солнышко —<br>
+            всегда сияй так же ярко,<br>
+            как и в наше первое 8 марта 💛
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="env-hint" id="envHint">✦ нажми, чтобы открыть ✦</div>
+  </div>
+</section>
+
+<!-- ━━━ PHOTOS ━━━ -->
+<section class="photos-section">
+  <div class="section-label reveal-up">Наши моменты</div>
+  <div class="photos-grid" id="photoGrid">
+    <!-- Photos generated by JS -->
+  </div>
+</section>
+
+<!-- ━━━ FINALE ━━━ -->
+<section class="finale-section">
+  <div class="finale-flowers">🌸 🌷 🌺</div>
+  <h2 class="finale-title reveal-up">С восьмым<br>марта!</h2>
+  <p class="finale-sign reveal-up">Люблю тебя 💕</p>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+  <span class="lightbox-nav lightbox-prev" onclick="navPhoto(-1); event.stopPropagation()">‹</span>
+  <img id="lightboxImg" src="" alt="">
+  <span class="lightbox-nav lightbox-next" onclick="navPhoto(1); event.stopPropagation()">›</span>
+</div>
+
+<script>
+// ━━━ CURSOR (desktop only) ━━━
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursorTrail');
+let mx = 0, my = 0, tx = 0, ty = 0;
+if (window.matchMedia('(hover: hover)').matches) {
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+  (function animTrail() {
+    tx += (mx - tx) * 0.12;
+    ty += (my - ty) * 0.12;
+    trail.style.left = tx + 'px';
+    trail.style.top = ty + 'px';
+    requestAnimationFrame(animTrail);
+  })();
+}
+
+// ━━━ FALLING PETALS CANVAS ━━━
+const canvas = document.getElementById('flowerCanvas');
+const ctx = canvas.getContext('2d');
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const emojis = ['🌸','🌷','✿','❀','🌺','💮'];
+const particles = [];
+class Particle {
+  constructor() { this.reset(true); }
+  reset(init = false) {
+    this.x = Math.random() * canvas.width;
+    this.y = init ? Math.random() * canvas.height : -30;
+    this.size = 10 + Math.random() * 14;
+    this.speedY = 0.4 + Math.random() * 0.8;
+    this.speedX = (Math.random() - 0.5) * 0.5;
+    this.rot = Math.random() * Math.PI * 2;
+    this.rotSpeed = (Math.random() - 0.5) * 0.02;
+    this.opacity = 0.25 + Math.random() * 0.45;
+    this.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  }
+  update() {
+    this.y += this.speedY; this.x += this.speedX; this.rot += this.rotSpeed;
+    if (this.y > canvas.height + 30) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rot);
+    ctx.font = this.size + 'px serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(this.emoji, 0, 0);
+    ctx.restore();
+  }
+}
+for (let i = 0; i < 22; i++) particles.push(new Particle());
+(function animCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animCanvas);
+})();
+
+// ━━━ HEARTS ON TAP/CLICK ━━━
+const hearts = ['💗','💕','💖','💝','🌸','✨','🌷'];
+function spawnHearts(x, y) {
+  for (let i = 0; i < 7; i++) {
+    const el = document.createElement('div');
+    el.className = 'heart-particle';
+    el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    const angle = (i / 7) * Math.PI * 2;
+    const dist = 20 + Math.random() * 30;
+    el.style.left = (x + Math.cos(angle) * dist - 12) + 'px';
+    el.style.top  = (y + Math.sin(angle) * dist - 12) + 'px';
+    el.style.animationDelay = (i * 0.06) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1800);
+  }
+}
+document.addEventListener('click', e => spawnHearts(e.clientX, e.clientY));
+document.addEventListener('touchend', e => {
+  const t = e.changedTouches[0];
+  spawnHearts(t.clientX, t.clientY);
+}, { passive: true });
+
+// ━━━ ENVELOPE ━━━
+let envelopeOpened = false;
+function openEnvelope() {
+  if (envelopeOpened) return;
+  envelopeOpened = true;
+  const env = document.getElementById('envelope');
+  const hint = document.getElementById('envHint');
+  env.classList.add('open');
+  hint.style.opacity = '0';
+  const rect = env.getBoundingClientRect();
+  for (let i = 0; i < 14; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'heart-particle';
+      el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      el.style.left = (rect.left + Math.random() * rect.width - 12) + 'px';
+      el.style.top  = (rect.top + rect.height / 2 + (Math.random() - 0.5) * 60) + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1800);
+    }, i * 70);
+  }
+}
+
+// ━━━ PHOTO GALLERY ━━━
+const photoCount = 8;
+const grid = document.getElementById('photoGrid');
+const photoSrcs = Array.from({length: photoCount}, (_, i) => `photo${i + 1}.jpg`);
+let currentPhoto = 0;
+
+photoSrcs.forEach((src, idx) => {
+  const item = document.createElement('div');
+  item.className = 'photo-item';
+
+  const img = document.createElement('img');
+  img.alt = `Фото ${idx + 1}`;
+  img.loading = 'lazy';
+
+  // Try to load, show placeholder if fails
+  img.onerror = () => {
+    item.innerHTML = `
+      <div class="photo-placeholder">
+        <span>🌸</span>
+        <span>photo${idx + 1}.jpg</span>
+      </div>`;
+  };
+  img.src = src;
+
+  item.appendChild(img);
+  item.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openLightbox(idx);
+  });
+  grid.appendChild(item);
+});
+
+// Staggered reveal for photos
+const photoObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const items = grid.querySelectorAll('.photo-item');
+      items.forEach((item, i) => {
+        setTimeout(() => item.classList.add('visible'), i * 80);
+      });
+      photoObs.disconnect();
+    }
+  });
+}, { threshold: 0.1 });
+photoObs.observe(grid);
+
+// ━━━ LIGHTBOX ━━━
+function openLightbox(idx) {
+  currentPhoto = idx;
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  img.src = photoSrcs[idx];
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('lightbox') && !e.target.classList.contains('lightbox-close')) return;
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function navPhoto(dir) {
+  currentPhoto = (currentPhoto + dir + photoCount) % photoCount;
+  document.getElementById('lightboxImg').src = photoSrcs[currentPhoto];
+}
+// Swipe on mobile
+let touchStartX = 0;
+document.getElementById('lightbox').addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+document.getElementById('lightbox').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) navPhoto(dx < 0 ? 1 : -1);
+});
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('active')) return;
+  if (e.key === 'ArrowRight') navPhoto(1);
+  if (e.key === 'ArrowLeft') navPhoto(-1);
+  if (e.key === 'Escape') { document.getElementById('lightbox').classList.remove('active'); document.body.style.overflow = ''; }
+});
+
+// ━━━ SCROLL REVEAL ━━━
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal-up').forEach(el => revealObs.observe(el));
+</script>
+</body>
+</html>
